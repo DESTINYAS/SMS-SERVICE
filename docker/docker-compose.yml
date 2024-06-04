@@ -1,0 +1,29 @@
+version: "3"
+services:
+
+  boosta-sms-service:
+    image: boosta-sms-service
+    build:
+      context: ./..
+      dockerfile: Dockerfile
+    container_name: boosta-messaging
+    command: "npm run start:prod"
+    volumes:
+      - /usr/boosta/sms-service/node_modules
+    restart: 'unless-stopped'
+
+    env_file: # ! use environment on staging/production environment
+      - ./.docker.env # ? this must be located at the root of the project
+
+    # override what's stored in the .env file
+    environment:
+      # - SMS_PROVIDER_API_URL_SEND_MESSAGE=${SMS_PROVIDER_API_URL_SEND_MESSAGE}
+      - POSTGRES_PORT=5432
+      - RABBITMQ_HOST_AND_PORT=
+      - RABBITMQ_QUEUE_NAME=
+      - SMS_PROVIDER=
+ 
+networks:
+  default:
+    external: true
+    name: boosta-network
